@@ -31,7 +31,7 @@ function fetchAndDisplayBoardsAndTasks() {
   displayBoards(boards);
   if (boards.length > 0) {
     const localStorageBoard = JSON.parse(localStorage.getItem("activeBoard"))
-    activeBoard = localStorageBoard ? localStorageBoard ;  boards[0]; 
+    activeBoard = localStorageBoard ? localStorageBoard :  boards[0]; 
     elements.headerBoardName.textContent = activeBoard
     styleActiveBoard(activeBoard)
     refreshTasksUI();
@@ -47,13 +47,13 @@ function displayBoards(boards) {
     const boardElement = document.createElement("button");
     boardElement.textContent = board;
     boardElement.classList.add("board-btn");
-    boardElement.click()  { 
+    boardElement.addEventListener('click', function() { 
       elements.headerBoardName.textContent = board;
       filterAndDisplayTasksByBoard(board);
       activeBoard = board //assigns active board
       localStorage.setItem("activeBoard", JSON.stringify(activeBoard))
       styleActiveBoard(activeBoard)
-    };
+    });
     boardsContainer.appendChild(boardElement);
   });
 
@@ -202,16 +202,27 @@ function addTask(event) {
       refreshTasksUI();
     }
 }
+toggleSidebar()
 
+function toggleSidebar() {
+  const showSideBarBtn = document.getElementById('show-side-bar-btn');
+  const sideBar = document.getElementById('side-bar-div')
+  
+  showSideBarBtn.addEventListener('click', function(){
 
-function toggleSidebar(show) {
- 
+  if (sideBar.style.display == 'none') {
+    sideBar.style.display = "block";
+  }else {
+    sideBar.style.display = "none"
+  }
+console.log('hello')
+  })
 }
 
 function toggleTheme() {
  
 }
-
+console.log("hello")
 
 
 function openEditTaskModal(task) {
