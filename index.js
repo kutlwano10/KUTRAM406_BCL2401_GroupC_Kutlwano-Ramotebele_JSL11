@@ -17,7 +17,7 @@ function initializeData() {
     console.log("Data already exists in localStorage");
   }
 }
-
+initializeData()
 
 // TASK: Get elements from the DOM
 const elements = {
@@ -27,7 +27,8 @@ const elements = {
   hideSideBarBtn: document.getElementById('hide-side-bar-btn'),
   themeSwitch: document.getElementById('switch'),
   createNewTaskBtn: document.getElementById('add-new-task-btn'),
-  showSideBar: document.getElementById('side-bar-div')
+  showSideBar: document.getElementById('side-bar-div'),
+  columnDivs: document.querySelector('.column-div')
 };
 
 let activeBoard = "";
@@ -71,11 +72,11 @@ function displayBoards(boards) {
 // TASK: Fix Bugs
 function filterAndDisplayTasksByBoard(boardName) {
   const tasks = getTasks(); // Fetch tasks from a simulated local storage function
-  const filteredTasks = tasks.filter((task) => (task.board = boardName));
+  const filteredTasks = tasks.filter((task) => (task.board === boardName));
 
   // Ensure the column titles are set outside of this function or correctly initialized before this function runs
 
-  elements.columnDivs.forEach((column) => {
+  elements.columnDivs.forEach(column => {
     const status = column.getAttribute("data-status");
     // Reset column content while preserving the column title
     column.innerHTML = `<div class="column-head-div">
@@ -113,9 +114,9 @@ function refreshTasksUI() {
 function styleActiveBoard(boardName) {
   document.querySelectorAll(".board-btn").foreach((btn) => {
     if (btn.textContent === boardName) {
-      btn.add("active");
+      btn.classList.add("active");
     } else {
-      btn.remove("active");
+      btn.classList.remove("active");
     }
   });
 }
@@ -230,16 +231,10 @@ function toggleSidebar(show) {
     
   }
     
-  // if (sideBar.style.display == "none") {
-  //   sideBar.style.display = "block";
-  // } else {
-  //   sideBar.style.display = "none";
-  // }
-  
 }
 
 function toggleTheme() {
-  document.body.style.backgroundColor = '#fff';
+  document.body.style.background = '#fff';
   
 
   
