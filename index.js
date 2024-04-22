@@ -28,7 +28,9 @@ const elements = {
   themeSwitch: document.getElementById('switch'),
   createNewTaskBtn: document.getElementById('add-new-task-btn'),
   showSideBar: document.getElementById('side-bar-div'),
-  columnDivs: document.querySelector('.column-div')
+  columnDivs: document.querySelector('.column-div'),
+  headerBoardName: document.getElementById('header-board-name'),
+  filterDiv: document.getElementById('filterDiv')
 };
 
 let activeBoard = "";
@@ -76,7 +78,7 @@ function filterAndDisplayTasksByBoard(boardName) {
 
   // Ensure the column titles are set outside of this function or correctly initialized before this function runs
 
-  elements.columnDivs.forEach(column => {
+  elements.columnDivs.forEach((column) => {
     const status = column.getAttribute("data-status");
     // Reset column content while preserving the column title
     column.innerHTML = `<div class="column-head-div">
@@ -112,7 +114,7 @@ function refreshTasksUI() {
 // Styles the active board by adding an active class
 // TASK: Fix Bugs
 function styleActiveBoard(boardName) {
-  document.querySelectorAll(".board-btn").foreach((btn) => {
+  document.querySelectorAll(".board-btn").forEach((btn) => {
     if (btn.textContent === boardName) {
       btn.classList.add("active");
     } else {
@@ -123,7 +125,7 @@ function styleActiveBoard(boardName) {
 
 function addTaskToUI(task) {
   const column = document.querySelector(
-    '.column-div[data-status="${task.status}"]'
+    `.column-div[data-status="${task.status}"]`
   );
   if (!column) {
     console.error(`Column not found for status: ${task.status}`);
@@ -145,7 +147,7 @@ function addTaskToUI(task) {
   taskElement.textContent = task.title; // Modify as needed
   taskElement.setAttribute("data-task-id", task.id);
 
-  tasksContainer.appendChild();
+  tasksContainer.appendChild(taskElement);
 }
 
 function setupEventListeners() {
