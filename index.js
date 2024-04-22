@@ -220,8 +220,14 @@ function addTask(event) {
 function toggleSidebar(show) {
   
   if(show == true){
-    console.log(elements.showSideBar)
+    
     elements.showSideBar.style.display ="block"
+    elements.showSideBarBtn.style.display = "none"
+  }
+  if (show == false){
+    elements.showSideBar.style.display = "none"
+    elements.showSideBarBtn.style.display = "block"
+    
   }
     
   // if (sideBar.style.display == "none") {
