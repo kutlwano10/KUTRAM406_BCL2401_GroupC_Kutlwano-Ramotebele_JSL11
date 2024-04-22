@@ -18,8 +18,17 @@ function initializeData() {
   }
 }
 
+
 // TASK: Get elements from the DOM
-const elements = {};
+const elements = {
+  modalWindow: document.getElementById("new-task-modal-window"),
+  filterDiv: document.getElementById('filterDiv'),
+  showSideBarBtn: document.getElementById("show-side-bar-btn"),
+  hideSideBarBtn: document.getElementById('hide-side-bar-btn'),
+  themeSwitch: document.getElementById('switch'),
+  createNewTaskBtn: document.getElementById('add-new-task-btn'),
+  showSideBar: document.getElementById('side-bar-div')
+};
 
 let activeBoard = "";
 
@@ -206,22 +215,29 @@ function addTask(event) {
     refreshTasksUI();
   }
 }
-toggleSidebar();
 
-function toggleSidebar() {
-  const showSideBarBtn = document.getElementById("show-side-bar-btn");
-  const sideBar = document.getElementById("side-bar-div");
-
-  showSideBarBtn.addEventListener("click", function () {
-    if (sideBar.style.display == "none") {
-      sideBar.style.display = "block";
-    } else {
-      sideBar.style.display = "none";
-    }
-  });
+//SIDE BAR FUNCTION
+function toggleSidebar(show) {
+  
+  if(show == true){
+    console.log(elements.showSideBar)
+    elements.showSideBar.style.display ="block"
+  }
+    
+  // if (sideBar.style.display == "none") {
+  //   sideBar.style.display = "block";
+  // } else {
+  //   sideBar.style.display = "none";
+  // }
+  
 }
 
-function toggleTheme() {}
+function toggleTheme() {
+  document.body.style.backgroundColor = '#fff';
+  
+
+  
+}
 
 function openEditTaskModal(task) {
   // Set task details in modal inputs
