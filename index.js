@@ -28,7 +28,7 @@ const elements = {
   themeSwitch: document.getElementById('switch'),
   createNewTaskBtn: document.getElementById('add-new-task-btn'),
   showSideBar: document.getElementById('side-bar-div'),
-  columnDivs: document.querySelector('.column-div'),
+  columnDivs: document.querySelectorAll('.column-div'),
   headerBoardName: document.getElementById('header-board-name'),
   filterDiv: document.getElementById('filterDiv')
 };
@@ -79,7 +79,9 @@ function filterAndDisplayTasksByBoard(boardName) {
   // Ensure the column titles are set outside of this function or correctly initialized before this function runs
 
   elements.columnDivs.forEach((column) => {
-    const status = column.getAttribute("data-status");
+    console.log(column)
+    const status = column.getAttribute("data-status");//is todo,doing , Done
+    // console.log(status)
     // Reset column content while preserving the column title
     column.innerHTML = `<div class="column-head-div">
                           <span class="dot" id="${status}-dot"></span>
@@ -90,7 +92,7 @@ function filterAndDisplayTasksByBoard(boardName) {
     column.appendChild(tasksContainer);
 
     filteredTasks
-      .filter((task) => (task.status = status))
+      .filter((task) => (task.status == status))
       .forEach((task) => {
         const taskElement = document.createElement("div");
         taskElement.classList.add("task-div");
