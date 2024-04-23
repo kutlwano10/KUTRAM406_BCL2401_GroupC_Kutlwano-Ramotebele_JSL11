@@ -31,8 +31,8 @@ const elements = {
   columnDivs: document.querySelectorAll('.column-div'),//had to pick all since they carry the same class so that they can appear
   headerBoardName: document.getElementById('header-board-name'),
   filterDiv: document.getElementById('filterDiv'),
-  editTaskModal: document.getElementById('edit-task-modal-window'),
-  modalWindow: document.getElementById('new-task-modal-window')
+  editTaskModal: document.querySelector('.edit-task-modal-window'),
+  
 };
 
 let activeBoard = "";
@@ -138,7 +138,7 @@ function addTaskToUI(task) {
     return;
   }
 
-  let tasksContainer = column.querySelectorAll(".tasks-container");
+  let tasksContainer = column.querySelector(".tasks-container");
   if (!tasksContainer) {
     console.warn(
       `Tasks container not found for status: ${task.status}, creating one.`
@@ -150,8 +150,10 @@ function addTaskToUI(task) {
 
   const taskElement = document.createElement("div");
   taskElement.className = "task-div";
-  taskElement.textContent = task.title; // Modify as needed
+  taskElement.textContent = task.title;
+  console.log(task.id) // Modify as needed
   taskElement.setAttribute("data-task-id", task.id);
+ 
 
   tasksContainer.appendChild(taskElement);
 }
@@ -203,9 +205,10 @@ function setupEventListeners() {
 // Toggles tasks modal
 // Task: Fix bugs
 //FOR MODAL TO SHOW
-function toggleModal(show) {
+function toggleModal(show, modal = elements.modalWindow) {
   
-  elements.modalWindow.style.display = show ? "block" : "none";//BUG FIXED
+  modal.style.display = show ? "block" : "none";//BUG FIXED
+  
 }
 
 /*************************************************************************************************************************************************
@@ -219,8 +222,9 @@ function addTask(event) {
   // THE SAME WAY WE DID ON ELEMENTS
   const task = {
     title: document.getElementById('title-input').value,
-    discription: document.getElementById('disc-input'),
-    status: document.getElementById('select-status').value
+    discription: document.getElementById('desc-input').value,
+    status: document.getElementById('select-status').value,
+    board: activeBoard
 
   };
   const newTask = createNewTask(task);
@@ -237,12 +241,11 @@ function addTask(event) {
 function toggleSidebar(show) {
   
   
-  if(show == true){
+  if(show ){
     
     elements.showSideBar.style.display ="block"
     elements.showSideBarBtn.style.display = "none"
-  }
-  if (show == false){
+  }else {
     elements.showSideBar.style.display = "none"
     elements.showSideBarBtn.style.display = "block"
     
@@ -251,30 +254,60 @@ function toggleSidebar(show) {
 }
 
 function toggleTheme() {
+  document.body.classList.toggle('light-theme')
   
   
 }
 
 function openEditTaskModal(task) {
   // Set task details in modal inputs
+  document.getElementById('edit-task-title-input').value = task.title
+  document.getElementById('edit-task-desc-input').value = task.description
+  document.getElementById('edit-select-status').value = task.status
+
 
   // Get button elements from the task modal
+  const saveTaskChangesBtn = document.getElementById('save-task-changes-btn');
+  const deleteTaskBtn = document.getElementById('delete-task-btn');
+  const cancelEditBtn = document.getElementById('cancel-edit-btn');
 
   // Call saveTaskChanges upon click of Save Changes button
+  saveTaskChangesBtn.addEventListener('click', function() {
+    saveTaskChanges(task.id)
+    toggleModal(false, elements.editTaskModal)//close it
+  })
 
   // Delete task using a helper function and close the task modal
+  deleteTaskBtn.addEventListener('click', function() {
+    deleteTask(task.id)//deletes the task
+    toggleModal(false, elements.editTaskModal)//close the modal
+    refreshTasksUI()
+  })
+  cancelEditBtn.addEventListener('click', function() {
+    toggleModal(false, elements.editTaskModal)
+  })
 
   toggleModal(true, elements.editTaskModal); // Show the edit task modal
 }
 
 function saveTaskChanges(taskId) {
   // Get new user inputs
+  const editTaskTitle = document.getElementById('edit-task-title-input').value;
+  const editTaskDescription = document.getElementById('edit-task-desc-input').value;
+  const editTaskStatus = document.getElementById('edit-select-status').value
 
   // Create an object with the updated task details
+  const updateTask = {
+    title: editTaskTitle,
+    description: editTaskDescription,
+    status: editTaskStatus
+  }
 
   // Update task using a hlper functoin
+  patchTask(taskId, updateTask);
 
   // Close the modal and refresh the UI to reflect the changes
+  toggleModal(false, elements.editTaskModal)
 
   refreshTasksUI();
 }
