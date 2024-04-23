@@ -28,9 +28,11 @@ const elements = {
   themeSwitch: document.getElementById('switch'),
   createNewTaskBtn: document.getElementById('add-new-task-btn'),
   showSideBar: document.getElementById('side-bar-div'),
-  columnDivs: document.querySelectorAll('.column-div'),
+  columnDivs: document.querySelectorAll('.column-div'),//had to pick all since they carry the same class so that they can appear
   headerBoardName: document.getElementById('header-board-name'),
-  filterDiv: document.getElementById('filterDiv')
+  filterDiv: document.getElementById('filterDiv'),
+  editTaskModal: document.getElementById('edit-task-modal-window'),
+  modalWindow: document.getElementById('new-task-modal-window')
 };
 
 let activeBoard = "";
@@ -38,7 +40,7 @@ let activeBoard = "";
 // Extracts unique board names from tasks
 // TASK: FIX BUGS
 function fetchAndDisplayBoardsAndTasks() {
-  const tasks = getTasks();
+  const tasks = getTasks();//GETTING DATA FROM LOCAL STORAGE
   const boards = [...new Set(tasks.map((task) => task.board).filter(Boolean))];
   displayBoards(boards);
   if (boards.length > 0) {
@@ -79,7 +81,7 @@ function filterAndDisplayTasksByBoard(boardName) {
   // Ensure the column titles are set outside of this function or correctly initialized before this function runs
 
   elements.columnDivs.forEach((column) => {
-    console.log(column)
+    
     const status = column.getAttribute("data-status");//is todo,doing , Done
     // console.log(status)
     // Reset column content while preserving the column title
@@ -92,7 +94,7 @@ function filterAndDisplayTasksByBoard(boardName) {
     column.appendChild(tasksContainer);
 
     filteredTasks
-      .filter((task) => (task.status == status))
+      .filter((task) => (task.status === status))//compare if they are the same
       .forEach((task) => {
         const taskElement = document.createElement("div");
         taskElement.classList.add("task-div");
@@ -125,16 +127,18 @@ function styleActiveBoard(boardName) {
   });
 }
 
+//NEEDS TO ADD THE NEW TASK TO USER INT
 function addTaskToUI(task) {
   const column = document.querySelector(
     `.column-div[data-status="${task.status}"]`
   );
+  console.log(task.status)
   if (!column) {
     console.error(`Column not found for status: ${task.status}`);
     return;
   }
 
-  let tasksContainer = column.querySelector(".tasks-container");
+  let tasksContainer = column.querySelectorAll(".tasks-container");
   if (!tasksContainer) {
     console.warn(
       `Tasks container not found for status: ${task.status}, creating one.`
@@ -198,8 +202,10 @@ function setupEventListeners() {
 
 // Toggles tasks modal
 // Task: Fix bugs
-function toggleModal(show, modal = elements.modalWindow) {
-  modal.style.display = show ? "block" : "none";
+//FOR MODAL TO SHOW
+function toggleModal(show) {
+  
+  elements.modalWindow.style.display = show ? "block" : "none";//BUG FIXED
 }
 
 /*************************************************************************************************************************************************
@@ -210,7 +216,13 @@ function addTask(event) {
   event.preventDefault();
 
   //Assign user input to the task object
-  const task = {};
+  // THE SAME WAY WE DID ON ELEMENTS
+  const task = {
+    title: document.getElementById('title-input').value,
+    discription: document.getElementById('disc-input'),
+    status: document.getElementById('select-status').value
+
+  };
   const newTask = createNewTask(task);
   if (newTask) {
     addTaskToUI(newTask);
@@ -223,6 +235,7 @@ function addTask(event) {
 
 //SIDE BAR FUNCTION
 function toggleSidebar(show) {
+  
   
   if(show == true){
     
@@ -238,9 +251,7 @@ function toggleSidebar(show) {
 }
 
 function toggleTheme() {
-  document.body.style.background = '#fff';
   
-
   
 }
 
