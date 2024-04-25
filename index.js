@@ -8,11 +8,17 @@ import {initialData} from './initialData.js';
  * **********************************************************************************************************************************************/
 
 // Function checks if local storage already has data, if not it loads initialData to localStorage
-
+const image = document.getElementById('logo')
 function initializeData() {
+  
   if (!localStorage.getItem("tasks")) {
     localStorage.setItem("tasks", JSON.stringify(initialData));
     localStorage.setItem("showSideBar", "true");
+    localStorage.setItem('light-theme','enabled');
+    localStorage.setItem('logo','./assets/logo-light.svg');
+    localStorage.setItem('switch', 'true')
+    image.src = localStorage.getItem('logo')
+
   } else {
     console.log("Data already exists in localStorage");
   }
@@ -45,7 +51,7 @@ function fetchAndDisplayBoardsAndTasks() {
   displayBoards(boards);
   if (boards.length > 0) {
     const localStorageBoard = JSON.parse(localStorage.getItem("activeBoard"));
-    activeBoard = localStorageBoard ? localStorageBoard : boards[0];
+    activeBoard = localStorageBoard ? localStorageBoard : boards[0]; // bug ';' instead of ':'
     elements.headerBoardName.textContent = activeBoard;
     styleActiveBoard(activeBoard);
     refreshTasksUI();
@@ -61,7 +67,7 @@ function displayBoards(boards) {
     const boardElement = document.createElement("button");
     boardElement.textContent = board;
     boardElement.classList.add("board-btn");
-    boardElement.addEventListener("click", function () {
+    boardElement.addEventListener("click", function () {//BUG : 'click()' instead of eventListener
       elements.headerBoardName.textContent = board;
       filterAndDisplayTasksByBoard(board);
       activeBoard = board; //assigns active board
@@ -76,7 +82,7 @@ function displayBoards(boards) {
 // TASK: Fix Bugs
 function filterAndDisplayTasksByBoard(boardName) {
   const tasks = getTasks(); // Fetch tasks from a simulated local storage function
-  const filteredTasks = tasks.filter((task) => (task.board === boardName));
+  const filteredTasks = tasks.filter((task) => (task.board === boardName)); //BUG : "=" instead of === for comparing
 
   // Ensure the column titles are set outside of this function or correctly initialized before this function runs
 
@@ -102,7 +108,7 @@ function filterAndDisplayTasksByBoard(boardName) {
         taskElement.setAttribute("data-task-id", task.id);
 
         // Listen for a click event on each task and open a modal
-        taskElement.addEventListener("click", function () {
+        taskElement.addEventListener("click", function () {// BUG: wrong use of eventListener()
           openEditTaskModal(task);
         });
 
@@ -120,9 +126,9 @@ function refreshTasksUI() {
 function styleActiveBoard(boardName) {
   document.querySelectorAll(".board-btn").forEach((btn) => {
     if (btn.textContent === boardName) {
-      btn.classList.add("active");
+      btn.classList.add("active"); //BUG: missed classList
     } else {
-      btn.classList.remove("active");
+      btn.classList.remove("active");// BUG : Missed classList
     }
   });
 }
@@ -130,7 +136,7 @@ function styleActiveBoard(boardName) {
 //NEEDS TO ADD THE NEW TASK TO USER INT
 function addTaskToUI(task) {
   const column = document.querySelector(
-    `.column-div[data-status="${task.status}"]`
+    `.column-div[data-status="${task.status}"]`//Bug : Had to use template literal instead of a string
   );
   console.log(task.status)
   if (!column) {
@@ -158,6 +164,7 @@ function addTaskToUI(task) {
   tasksContainer.appendChild(taskElement);
 }
 
+//FUNCTION FOR ALL BUTTONS CLICKS 
 function setupEventListeners() {
   // Cancel editing task event listener
   
@@ -205,11 +212,12 @@ function setupEventListeners() {
 // Toggles tasks modal
 // Task: Fix bugs
 //FOR MODAL TO SHOW
-function toggleModal(show, modal = elements.modalWindow) {
+function toggleModal(show, modal = elements.modalWindow) {//Which modal must open
   
-  modal.style.display = show ? "block" : "none";//BUG FIXED
+  modal.style.display = show ? "block" : "none";//BUG : used '=>' instead of :
   
 }
+
 
 /*************************************************************************************************************************************************
  * COMPLETE FUNCTION CODE
@@ -239,6 +247,9 @@ function addTask(event) {
 
 //SIDE BAR FUNCTION
 function toggleSidebar(show) {
+  const sidebarBottomClass = document.querySelector(".side-bar-bottom");
+
+  sidebarBottomClass.style.marginTop = '300px';
   
   
   if(show ){
@@ -248,17 +259,35 @@ function toggleSidebar(show) {
   }else {
     elements.showSideBar.style.display = "none"
     elements.showSideBarBtn.style.display = "block"
+  }
+  if(localStorage.getItem("showSideBar") == "true") {
+    localStorage.setItem("showSideBar", true)
+  }
+  if (localStorage.setItem("showSideBarBtn", false)){
     
   }
     
 }
 
 function toggleTheme() {
-  document.body.classList.toggle('light-theme')
-  
-  
+  // document.body.classList.toggle('light-theme')
+  // localStorage.setItem('light-theme', "enabled");
+  // if( localStorage.('light-theme', "enabled"))
+  if(localStorage.getItem('light-theme') == 'enabled'){
+    document.body.classList.toggle('light-theme',false);
+    localStorage.setItem('light-theme','disabled')
+    image.src = localStorage.getItem('logo')
+  }
+  else{
+    document.body.classList.toggle('light-theme',true);
+    localStorage.setItem('light-theme','enabled')
+    image.src = localStorage.getItem('logo')
+
+  }
+ 
 }
 
+//OPENS THE EDTI TASK /Only for edit Modal
 function openEditTaskModal(task) {
   // Set task details in modal inputs
   document.getElementById('edit-task-title-input').value = task.title
@@ -286,9 +315,11 @@ function openEditTaskModal(task) {
   cancelEditBtn.addEventListener('click', function() {
     toggleModal(false, elements.editTaskModal)
   })
-
+  
   toggleModal(true, elements.editTaskModal); // Show the edit task modal
 }
+
+//
 
 function saveTaskChanges(taskId) {
   // Get new user inputs
@@ -316,6 +347,7 @@ function saveTaskChanges(taskId) {
 
 document.addEventListener("DOMContentLoaded", function () {
   init(); // init is called after the DOM is fully loaded
+  
 });
 
 function init() {
@@ -324,5 +356,13 @@ function init() {
   toggleSidebar(showSidebar);
   const isLightTheme = localStorage.getItem("light-theme") === "enabled";
   document.body.classList.toggle("light-theme", isLightTheme);
+
+  if(localStorage.getItem('logo') == './asset/logo-dark.svg'){
+    image.src = './asset/logo-light.svg'
+  } 
+
+  if (localStorage.getItem('switch') =='false') {
+    elements.themeSwitch.setAttribute('checked', 'false')
+  }
   fetchAndDisplayBoardsAndTasks(); // Initial display of boards and tasks
 }
